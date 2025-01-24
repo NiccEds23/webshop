@@ -1,42 +1,45 @@
 {% macro product_image_square(website_image, css_class="") %}
 <div class="product-image product-image-square h-100 rounded
-	{% if not website_image -%} missing-image {%- endif %} {{ css_class }}"
-	{% if website_image -%}
-	style="background-image: url('{{ frappe.utils.quoted(website_image) | abs_url }}');"
-	{%- endif %}>
+	{% if not website_image -%} missing-image {%- endif %} {{ css_class }}" {% if website_image -%}
+	style="background-image: url('{{ frappe.utils.quoted(website_image) | abs_url }}');" {%- endif %}>
 </div>
 {% endmacro %}
 
 {% macro product_image(website_image, css_class="product-image", alt="", no_border=False) %}
-	<div class="{{ 'border' if not no_border else ''}} text-center rounded {{ css_class }}" style="overflow: hidden;">
-		{% if website_image %}
-			<img itemprop="image" class="website-image h-100 w-100" alt="{{ alt }}" src="{{ frappe.utils.quoted(website_image) | abs_url }}">
-		{% else %}
-			<div itemprop="image" class="card-img-top no-image-item">
-				{{ frappe.utils.get_abbr(alt) or "NA" }}
-			</div>
-		{% endif %}
+<div class="{{ 'border' if not no_border else ''}} text-center rounded {{ css_class }}" style="overflow: hidden;">
+	{% if website_image %}
+	<img itemprop="image" class="website-image h-100 w-100" alt="{{ alt }}"
+		src="{{ frappe.utils.quoted(website_image) | abs_url }}">
+	<video class="website-image h-100 w-100" alt="{{ alt }}" src="{{ frappe.utils.quoted(website_image) | abs_url }}"
+		autoplay loop muted style="display: none;"></video>
+	{% else %}
+	<div itemprop="image" class="card-img-top no-image-item">
+		{{ frappe.utils.get_abbr(alt) or "NA" }}
 	</div>
+	{% endif %}
+</div>
 {% endmacro %}
 
 {% macro media_image(website_image, name, css_class="") %}
-	<div class="product-image sidebar-image-wrapper {{ css_class }}">
-		{% if not website_image -%}
-		<div class="sidebar-standard-image"> <div class="standard-image" style="background-color: rgb(250, 251, 252);">{{name}}</div> </div>
-		{%- endif %}
-		{% if website_image -%}
-			<a href="{{ frappe.utils.quoted(website_image) }}">
-				<img itemprop="image" src="{{ frappe.utils.quoted(website_image) | abs_url }}"
-					class="img-responsive img-thumbnail sidebar-image" style="min-height:100%; min-width:100%;">
-			</a>
-		{%- endif %}
+<div class="product-image sidebar-image-wrapper {{ css_class }}">
+	{% if not website_image -%}
+	<div class="sidebar-standard-image">
+		<div class="standard-image" style="background-color: rgb(250, 251, 252);">{{name}}</div>
 	</div>
+	{%- endif %}
+	{% if website_image -%}
+	<a href="{{ frappe.utils.quoted(website_image) }}">
+		<img itemprop="image" src="{{ frappe.utils.quoted(website_image) | abs_url }}"
+			class="img-responsive img-thumbnail sidebar-image" style="min-height:100%; min-width:100%;">
+	</a>
+	{%- endif %}
+</div>
 {% endmacro %}
 
 {% macro render_homepage_section(section) %}
 
 {% if section.section_based_on == 'Custom HTML' and section.section_html %}
-	{{ section.section_html }}
+{{ section.section_html }}
 {% elif section.section_based_on == 'Cards' %}
 <section class="container my-5">
 	<h3>{{ section.name }}</h3>
@@ -46,7 +49,8 @@
 		<div class="col-md-{{ section.column_value }} mb-4">
 			<div class="card h-100 justify-content-between">
 				{% if card.image %}
-				<img itemprop="image" class="card-img-top h-75" src="{{ card.image }}" loading="lazy" alt="{{ card.title }}"></img>
+				<img itemprop="image" class="card-img-top h-75" src="{{ card.image }}" loading="lazy"
+					alt="{{ card.title }}"></img>
 				{% endif %}
 				<div itemprop="image" class="card-body">
 					<h5 class="card-title">{{ card.title }}</h5>
@@ -67,9 +71,9 @@
 
 {%- macro item_card(item, is_featured=False, is_full_width=False, align="Left",template="") -%}
 {%- set align_items_class = resolve_class({
-	'align-items-end': align == 'Right',
-	'align-items-center': align == 'Center',
-	'align-items-start': align == 'Left',
+'align-items-end': align == 'Right',
+'align-items-center': align == 'Center',
+'align-items-start': align == 'Left',
 }) -%}
 {%- set col_size = 3 if is_full_width else 4 -%}
 {%- set title = item.web_item_name or item.item_name or item.item_code -%}
@@ -90,9 +94,9 @@
 			</div>
 		</div>
 		{% else %}
-			<div class="col-md-12">
-				{{ item_card_body(title, description, item, is_featured, align,template) }}
-			</div>
+		<div class="col-md-12">
+			{{ item_card_body(title, description, item, is_featured, align,template) }}
+		</div>
 		{% endif %}
 	</div>
 </div>
@@ -100,11 +104,11 @@
 <div class="col-sm-{{ col_size }} item-card">
 	<div class="card {{ align_items_class }}" style="height: 360px;">
 		{% if image %}
-			<div class="card-img-container">
-				<a href="/{{ item.route or '#' }}" style="text-decoration: none;">
-					<img class="card-img" src="{{ image }}" alt="{{ title }}">
-				</a>
-			</div>
+		<div class="card-img-container">
+			<a href="/{{ item.route or '#' }}" style="text-decoration: none;">
+				<img class="card-img" src="{{ image }}" alt="{{ title }}">
+			</a>
+		</div>
 		{% else %}
 		<a href="/{{ item.route or '#' }}" style="text-decoration: none;">
 			<div class="card-img-top no-image">
@@ -120,9 +124,9 @@
 
 {%- macro item_card_body(title, description, item, is_featured, align,template) -%}
 {%- set align_class = resolve_class({
-	'text-right': align == 'Right',
-	'text-center': align == 'Center' and not is_featured,
-	'text-left': align == 'Left' or is_featured,
+'text-right': align == 'Right',
+'text-center': align == 'Center' and not is_featured,
+'text-left': align == 'Left' or is_featured,
 }) -%}
 <div class="card-body {{ align_class }}" style="width:100%">
 	<div class="mt-4">
@@ -133,13 +137,13 @@
 		</a>
 	</div>
 	{% if is_featured %}
-		<div class="product-description ellipsis text-muted" style="white-space: normal;">
-			{{ description or '' }}
-		</div>
+	<div class="product-description ellipsis text-muted" style="white-space: normal;">
+		{{ description or '' }}
+	</div>
 	{% else %}
-		{% if template != "Product Card" %}
-		<div class="product-category">{{ item.item_group or '' }}</div>
-		{% endif %}
+	{% if template != "Product Card" %}
+	<div class="product-category">{{ item.item_group or '' }}</div>
+	{% endif %}
 	{% endif %}
 </div>
 {%- endmacro -%}
@@ -153,11 +157,11 @@
 		<div class="card-img-container">
 			<a href="/{{ item.route or '#' }}" style="text-decoration: none;">
 				{% if item.image %}
-					<img itemprop="image" class="card-img" src="{{ item.image }}" alt="{{ title }}">
+				<img itemprop="image" class="card-img" src="{{ item.image }}" alt="{{ title }}">
 				{% else %}
-					<div itemprop="image" class="card-img-top no-image">
-						{{ frappe.utils.get_abbr(title) }}
-					</div>
+				<div itemprop="image" class="card-img-top no-image">
+					{{ frappe.utils.get_abbr(title) }}
+				</div>
 				{% endif %}
 			</a>
 			<div class="remove-wish" data-item-code="{{ item.item_code }}">
@@ -178,34 +182,33 @@
 		<div class="product-title">{{ title or ''}}</div>
 		<div class="product-category">{{ item.item_group or '' }}</div>
 	</div>
-	<div  class="product-price" itemprop="offers" itemscope itemtype="https://schema.org/AggregateOffer">
+	<div class="product-price" itemprop="offers" itemscope itemtype="https://schema.org/AggregateOffer">
 		{{ item.get("formatted_price") or '' }}
 
 		{% if item.get("formatted_mrp") %}
-			<small class="ml-1 striked-price">
-				<s>{{ item.formatted_mrp }}</s>
-			</small>
-			<small class="ml-1 product-info-green" >
-				{{ item.discount }} OFF
-			</small>
+		<small class="ml-1 striked-price">
+			<s>{{ item.formatted_mrp }}</s>
+		</small>
+		<small class="ml-1 product-info-green">
+			{{ item.discount }} OFF
+		</small>
 		{% endif %}
 	</div>
 
 	{% if (item.available and settings.show_stock_availability) or (not settings.show_stock_availability) %}
-		<!-- Show move to cart button if in stock or if showing stock availability is disabled -->
-		<button data-item-code="{{ item.item_code}}"
-			class="btn btn-primary btn-add-to-cart-list btn-add-to-cart mt-2 w-100">
-			<span class="mr-2">
-				<svg class="icon icon-md">
-					<use href="#icon-assets"></use>
-				</svg>
-			</span>
-			{{ _("Move to Cart") }}
-		</button>
+	<!-- Show move to cart button if in stock or if showing stock availability is disabled -->
+	<button data-item-code="{{ item.item_code}}" class="btn btn-primary btn-add-to-cart-list btn-add-to-cart mt-2 w-100">
+		<span class="mr-2">
+			<svg class="icon icon-md">
+				<use href="#icon-assets"></use>
+			</svg>
+		</span>
+		{{ _("Move to Cart") }}
+	</button>
 	{% else %}
-		<div class="out-of-stock">
-			{{ _("Out of stock") }}
-		</div>
+	<div class="out-of-stock">
+		{{ _("Out of stock") }}
+	</div>
 	{% endif %}
 </div>
 {%- endmacro -%}
@@ -217,16 +220,16 @@
 	</p>
 	<div class="rating {{ 'ratings-pill' if for_summary else ''}}">
 		{% for i in range(1,6) %}
-		{% set fill_class = 'star-click' if i <= avg_rating*5 else '' %}
-			<svg class="icon icon-{{ size }} {{ fill_class }}">
-				<use href="#icon-star"></use>
+		{% set fill_class = 'star-click' if i <= avg_rating*5 else '' %} <svg class="icon icon-{{ size }} {{ fill_class }}">
+			<use href="#icon-star"></use>
 			</svg>
-		{% endfor %}
+			{% endfor %}
 	</div>
 </div>
 {%- endmacro -%}
 
-{%- macro ratings_summary(reviews, reviews_per_rating, average_rating, average_whole_rating, for_summary=False, total_reviews=None)-%}
+{%- macro ratings_summary(reviews, reviews_per_rating, average_rating, average_whole_rating, for_summary=False,
+total_reviews=None)-%}
 <div class="rating-summary-section mt-4">
 	<div class="rating-summary-numbers col-3">
 		<h2 style="font-size: 2rem;">
@@ -238,8 +241,8 @@
 
 		<!-- Ratings Summary -->
 		{% if reviews %}
-			{% set rating_title = frappe.utils.cstr(average_rating) + " " + _("out of 5") if not for_summary else ''%}
-			{{ ratings_with_title(average_whole_rating/5, rating_title, "md", "rating-summary-title", for_summary) }}
+		{% set rating_title = frappe.utils.cstr(average_rating) + " " + _("out of 5") if not for_summary else ''%}
+		{{ ratings_with_title(average_whole_rating/5, rating_title, "md", "rating-summary-title", for_summary) }}
 		{% endif %}
 
 		<div class="mt-2">{{ frappe.utils.cstr(average_rating or 0) + " " + _("out of 5") }}</div>
@@ -248,23 +251,21 @@
 	<!-- Rating Progress Bars -->
 	<div class="rating-progress-bar-section col-4 ml-4">
 		{% for percent in reviews_per_rating %}
-			<div class="col-sm-4 small rating-bar-title">
-				{{ loop.index }} star
-			</div>
-			<div class="row">
-				<div class="col-md-7">
-					<div class="progress rating-progress-bar" title="{{ percent }} % of reviews are {{ loop.index }} star">
-						<div class="progress-bar progress-bar-cosmetic" role="progressbar"
-							aria-valuenow="{{ percent }}"
-							aria-valuemin="0" aria-valuemax="100"
-							style="width: {{ percent }}%;">
-						</div>
+		<div class="col-sm-4 small rating-bar-title">
+			{{ loop.index }} star
+		</div>
+		<div class="row">
+			<div class="col-md-7">
+				<div class="progress rating-progress-bar" title="{{ percent }} % of reviews are {{ loop.index }} star">
+					<div class="progress-bar progress-bar-cosmetic" role="progressbar" aria-valuenow="{{ percent }}"
+						aria-valuemin="0" aria-valuemax="100" style="width: {{ percent }}%;">
 					</div>
 				</div>
-				<div class="col-sm-1 small">
-					{{ percent }}%
-				</div>
 			</div>
+			<div class="col-sm-1 small">
+				{{ percent }}%
+			</div>
+		</div>
 		{% endfor %}
 	</div>
 </div>
@@ -274,90 +275,84 @@
 <!-- User Reviews -->
 <div class="user-reviews">
 	{% for review in reviews %}
-		<div class="mb-3 review">
-			{{ ratings_with_title(review.rating, _(review.review_title), "sm", "user-review-title") }}
-			{% if review.comment %}
-				<div class="product-description mb-4">
-					<p>
-						{{ _(review.comment) }}
-					</p>
-				</div>
-			{% endif %}
-			<div class="review-signature mb-2">
-				<span class="reviewer">{{ _(review.customer) }}</span>
-				<span class="indicator grey" style="--text-on-gray: var(--gray-300);"></span>
-				<span class="reviewer">{{ review.published_on }}</span>
-			</div>
+	<div class="mb-3 review">
+		{{ ratings_with_title(review.rating, _(review.review_title), "sm", "user-review-title") }}
+		{% if review.comment %}
+		<div class="product-description mb-4">
+			<p>
+				{{ _(review.comment) }}
+			</p>
 		</div>
+		{% endif %}
+		<div class="review-signature mb-2">
+			<span class="reviewer">{{ _(review.customer) }}</span>
+			<span class="indicator grey" style="--text-on-gray: var(--gray-300);"></span>
+			<span class="reviewer">{{ review.published_on }}</span>
+		</div>
+	</div>
 	{% endfor %}
 </div>
 {%- endmacro -%}
 
 {%- macro field_filter_section(filters)-%}
 {% for field_filter in filters %}
-	{%- set item_field =  field_filter[0] %}
-	{%- set values =  field_filter[1] %}
-	<div class="mb-4 filter-block pb-5">
-		<div class="filter-label mb-3">{{ item_field.label }}</div>
+{%- set item_field = field_filter[0] %}
+{%- set values = field_filter[1] %}
+<div class="mb-4 filter-block pb-5">
+	<div class="filter-label mb-3">{{ item_field.label }}</div>
 
-		{% if values | len > 20 %}
-		<!-- show inline filter if values more than 20 -->
-		<input type="text" class="form-control form-control-sm mb-2 filter-lookup-input" placeholder="Search {{ item_field.label + 's' }}"/>
-		{% endif %}
+	{% if values | len > 20 %}
+	<!-- show inline filter if values more than 20 -->
+	<input type="text" class="form-control form-control-sm mb-2 filter-lookup-input"
+		placeholder="Search {{ item_field.label + 's' }}" />
+	{% endif %}
 
-		{% if values %}
-		<div class="filter-options">
-			{% for value in values %}
-			<div class="filter-lookup-wrapper checkbox" data-value="{{ value }}">
-				<label for="{{value}}">
-					<input type="checkbox"
-						class="product-filter field-filter"
-						id="{{value}}"
-						data-filter-name="{{ item_field.fieldname }}"
-						data-filter-value="{{ value }}"
-						style="width: 14px !important">
-					<span class="label-area">{{ value }}</span>
-				</label>
-			</div>
-			{% endfor %}
+	{% if values %}
+	<div class="filter-options">
+		{% for value in values %}
+		<div class="filter-lookup-wrapper checkbox" data-value="{{ value }}">
+			<label for="{{value}}">
+				<input type="checkbox" class="product-filter field-filter" id="{{value}}"
+					data-filter-name="{{ item_field.fieldname }}" data-filter-value="{{ value }}" style="width: 14px !important">
+				<span class="label-area">{{ value }}</span>
+			</label>
 		</div>
-		{% else %}
-		<i class="text-muted">{{ _('No values') }}</i>
-		{% endif %}
+		{% endfor %}
 	</div>
+	{% else %}
+	<i class="text-muted">{{ _('No values') }}</i>
+	{% endif %}
+</div>
 {% endfor %}
 {%- endmacro -%}
 
 {%- macro attribute_filter_section(filters)-%}
 {% for attribute in filters %}
-	<div class="mb-4 filter-block pb-5">
-		<div class="filter-label mb-3">{{ attribute.name }}</div>
-		{% if attribute.item_attribute_values | len > 20 %}
-		<!-- show inline filter if values more than 20 -->
-		<input type="text" class="form-control form-control-sm mb-2 filter-lookup-input" placeholder="Search {{ attribute.name + 's' }}"/>
-		{% endif %}
+<div class="mb-4 filter-block pb-5">
+	<div class="filter-label mb-3">{{ attribute.name }}</div>
+	{% if attribute.item_attribute_values | len > 20 %}
+	<!-- show inline filter if values more than 20 -->
+	<input type="text" class="form-control form-control-sm mb-2 filter-lookup-input"
+		placeholder="Search {{ attribute.name + 's' }}" />
+	{% endif %}
 
-		{% if attribute.item_attribute_values %}
-		<div class="filter-options">
-			{% for attr_value in attribute.item_attribute_values %}
-			<div class="filter-lookup-wrapper checkbox" data-value="{{ attr_value }}">
-				<label data-value="{{ attr_value }}">
-					<input type="checkbox"
-						class="product-filter attribute-filter"
-						id="{{ attr_value }}"
-						data-attribute-name="{{ attribute.name }}"
-						data-attribute-value="{{ attr_value }}"
-						style="width: 14px !important"
-						{% if attr_value.checked %} checked {% endif %}>
-						<span class="label-area">{{ attr_value }}</span>
-				</label>
-			</div>
-			{% endfor %}
+	{% if attribute.item_attribute_values %}
+	<div class="filter-options">
+		{% for attr_value in attribute.item_attribute_values %}
+		<div class="filter-lookup-wrapper checkbox" data-value="{{ attr_value }}">
+			<label data-value="{{ attr_value }}">
+				<input type="checkbox" class="product-filter attribute-filter" id="{{ attr_value }}"
+					data-attribute-name="{{ attribute.name }}" data-attribute-value="{{ attr_value }}"
+					style="width: 14px !important" {% if attr_value.checked %} checked {% endif %}>
+				<span class="label-area">{{ attr_value }}</span>
+			</label>
 		</div>
-		{% else %}
-		<i class="text-muted">{{ _('No values') }}</i>
-		{% endif %}
+		{% endfor %}
 	</div>
+	{% else %}
+	<i class="text-muted">{{ _('No values') }}</i>
+	{% endif %}
+</div>
 {% endfor %}
 {%- endmacro -%}
 
@@ -365,11 +360,12 @@
 <div class="recommended-item mb-6 d-flex">
 	<div class="r-item-image">
 		{% if item.website_item_thumbnail %}
-			{{ product_image(item.website_item_thumbnail, css_class="r-product-image", alt="item.website_item_name", no_border=True) }}
+		{{ product_image(item.website_item_thumbnail, css_class="r-product-image", alt="item.website_item_name",
+		no_border=True) }}
 		{% else %}
-			<div class="no-image-r-item">
-				{{ frappe.utils.get_abbr(item.website_item_name) or "NA" }}
-			</div>
+		<div class="no-image-r-item">
+			{{ frappe.utils.get_abbr(item.website_item_name) or "NA" }}
+		</div>
 		{% endif %}
 	</div>
 	<div class="r-item-info">
@@ -379,22 +375,22 @@
 		</a>
 
 		{% if item.get('price_info') %}
-			{% set price = item.get('price_info') %}
-			<div class="mt-2">
-				<span class="item-price">
-					{{ price.get('formatted_price') or '' }}
-				</span>
+		{% set price = item.get('price_info') %}
+		<div class="mt-2">
+			<span class="item-price">
+				{{ price.get('formatted_price') or '' }}
+			</span>
 
-				{% if price.get('formatted_mrp') %}
-					<br>
-					<span class="striked-item-price">
-						<s>MRP {{ price.formatted_mrp }}</s>
-					</span>
-					<span class="in-green">
-						- {{ price.get('formatted_discount_percent') or price.get('formatted_discount_rate')}}
-					</span>
-				{% endif %}
-			</div>
+			{% if price.get('formatted_mrp') %}
+			<br>
+			<span class="striked-item-price">
+				<s>MRP {{ price.formatted_mrp }}</s>
+			</span>
+			<span class="in-green">
+				- {{ price.get('formatted_discount_percent') or price.get('formatted_discount_rate')}}
+			</span>
+			{% endif %}
+		</div>
 		{% endif %}
 	</div>
 </div>
