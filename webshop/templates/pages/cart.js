@@ -20,9 +20,38 @@ $.extend(shopping_cart, {
 		shopping_cart.bind_coupon_code();
 	},
 
+	// bind_place_order: function() {
+	// 	$(".btn-place-order").on("click", function() {
+	// 		shopping_cart.place_order(this);
+	// 	});
+	// },
+
 	bind_place_order: function() {
 		$(".btn-place-order").on("click", function() {
-			shopping_cart.place_order(this);
+			// Mengambil nilai dari elemen HTML (misalnya select box)
+			var delivery_method = document.getElementById("delivery_method").value;
+			 var pickup_warehouse = document.getElementById("pickup_warehouse").value;
+			 var pickup_date = document.getElementById("pickup_date").value;
+			
+			//shopping_cart.place_order(this, delivery_method, pickup_warehouse);
+
+			frappe.call({
+				method: "webshop.webshop.shopping_cart.cart.place_order",
+				args: {
+					delivery_method: delivery_method,
+					pickup_warehouse: pickup_warehouse,
+					pickup_date: pickup_date
+				},
+				callback: function(response) {
+					if (response.exc) {
+						console.error("Error:", response.exc);  
+					} else {
+						console.log("Response from server:", response);
+						window.location.href = "/orders/"+response.message;
+					}
+				}
+			});
+			
 		});
 	},
 

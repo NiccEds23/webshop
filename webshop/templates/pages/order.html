@@ -125,7 +125,20 @@
 
 			<!-- taxes -->
 			<div class="">
-				{% include "webshop/templates/includes/order/order_taxes.html" %}
+				{% if customer.tax_category == 'FP' %}
+					{% include "webshop/templates/includes/order/order_taxes.html" %}
+				{% endif %}
+
+				<div class="w-100 mt-5 order-taxes font-weight-bold">
+					<div class="col-4 d-flex">
+						<div class="item-grand-total col-8">
+							{{ _("Grand Total") }}
+						</div>
+						<div class="item-grand-total col-4 text-right pr-0">
+							{{ doc.get_formatted("grand_total") }}
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

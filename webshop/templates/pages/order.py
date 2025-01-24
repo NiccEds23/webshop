@@ -11,6 +11,9 @@ def get_context(context):
 	context.no_cache = 1
 	context.show_sidebar = True
 	context.doc = frappe.get_doc(frappe.form_dict.doctype, frappe.form_dict.name)
+
+	context.customer = frappe.get_doc("Customer", context.doc.customer_name)
+
 	if hasattr(context.doc, "set_indicator"):
 		context.doc.set_indicator()
 

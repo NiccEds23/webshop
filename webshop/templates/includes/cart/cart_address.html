@@ -4,6 +4,61 @@
 	{% set select_address = True %}
 {% endif %}
 
+<script>
+    frappe.ready(() => {
+    $('#delivery_method').change(function() {
+        const method = $(this).val();
+        const warehouseContainer = $('#pickup_warehouse_container');
+		const dateContainer = $('#pickup_date_container');
+        
+        if (method === "Pickup") {
+            warehouseContainer.show();
+			dateContainer.show();
+
+            // Panggil API untuk mendapatkan daftar gudang
+            frappe.call({
+                method: "webshop.webshop.api.get_available_warehouses",
+                callback: function(response) {
+                    const warehouseSelect = $('#pickup_warehouse');
+                    warehouseSelect.empty(); // Kosongkan opsi sebelumnya
+
+                    response.message.forEach(warehouse => {
+                        const option = $('<option></option>').val(warehouse.name).text(warehouse.name);
+                        warehouseSelect.append(option);
+                    });
+                }
+            });
+        } else {
+            warehouseContainer.hide();
+			dateContainer.show();
+        }
+    });
+});
+
+</script>
+
+<div class="mb-3 frappe-card p-5" data-section="shipping-address">
+    <div class="form-group">
+        <label for="delivery_method">Delivery Method</label>
+        <select id="delivery_method" class="form-control">
+            <option value="Delivery">Delivery</option>
+            <option value="Pickup">Pickup</option>
+        </select>
+    </div>
+   
+    <div class="form-group" id="pickup_warehouse_container" style="display: none;">
+        <label for="pickup_warehouse">Pickup Warehouse</label>
+        <select id="pickup_warehouse" class="form-control">
+            <!-- Opsi gudang akan diisi dari backend -->
+        </select>
+    </div>
+
+	<div class="form-group" id="pickup_date_container" style="display: none;">
+		<label for="pickup_date">Pickup Date</label>
+		<input type="date" id="pickup_date" class="form-control">
+	</div>
+</div>
+
 <div class="mb-3 frappe-card p-5" data-section="shipping-address">
 	<div class="d-flex">
 		<div class="col-6 address-header"><h6>{{ _("Shipping Address") }}</h6></div>

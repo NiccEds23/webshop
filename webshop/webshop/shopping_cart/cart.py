@@ -87,7 +87,7 @@ def get_billing_addresses(party=None):
 
 
 @frappe.whitelist()
-def place_order():
+def place_order(delivery_method=None, pickup_warehouse=None, pickup_date=None):
 	quotation = _get_cart_quotation()
 	cart_settings = frappe.get_cached_doc("Webshop Settings")
 	quotation.company = cart_settings.company
@@ -108,6 +108,13 @@ def place_order():
 		)
 	)
 	sales_order.payment_schedule = []
+
+	sales_order.delivery_method = delivery_method
+	if delivery_method == 'Pickup':
+		if pickup_warehouse:
+			warehouse = frappe.get_doc("Warehouse", {"name": pickup_warehouse})
+			sales_order.set_warehouse = warehouse.name
+			sales_order.delivery_date = pickup_date
 
 	if not cint(cart_settings.allow_items_not_in_stock):
 		for item in sales_order.get("items"):

@@ -87,3 +87,13 @@ def get_product_filter_data(query_args=None):
 @frappe.whitelist(allow_guest=True)
 def get_guest_redirect_on_action():
 	return frappe.db.get_single_value("Webshop Settings", "redirect_on_action")
+
+@frappe.whitelist(allow_guest=True)
+def get_available_warehouses():
+    warehouses = frappe.db.sql("""
+        SELECT name
+        FROM `tabWarehouse`
+        WHERE show_as_pickup_warehouse = true
+    """, as_dict=True)
+
+    return warehouses

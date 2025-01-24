@@ -28,6 +28,8 @@ class ProductFiltersBuilder:
 			web_item_meta.get_field(field) for field in filter_fields if web_item_meta.has_field(field)
 		]
 
+		frappe.errprint(fields)
+
 		for df in fields:
 			item_filters, item_or_filters = {"published": 1}, []
 			link_doctype_values = self.get_filtered_link_doctype_records(df)
@@ -119,11 +121,26 @@ class ProductFiltersBuilder:
 		if not attributes:
 			return []
 
-		result = frappe.get_all(
-			"Item Variant Attribute",
-			filters={"attribute": ["in", attributes], "attribute_value": ["is", "set"]},
-			fields=["attribute", "attribute_value"],
-			distinct=True,
+		# result = frappe.get_all(
+		# 	"Item Variant Attribute",
+		# 	filters={"attribute": ["in", attributes], "attribute_value": ["is", "set"]},
+		# 	fields=["attribute", "attribute_value"],
+		# 	distinct=True,
+		# )
+		
+		string_attributes = "'%s'" % "','".join(attributes)
+		script = f"""
+			SELECT 
+					ITM.name as `attribute`,
+					ITMV.attribute_value as `attribute_value`
+			FROM `tabItem Attribute` as ITM
+				JOIN `tabItem Attribute Value` as ITMV on ITM.name = ITMV.parent
+			WHERE ITM.name IN ({string_attributes})
+			ORDER BY ITMV.idx ASC
+		"""
+
+		result = frappe.db.sql(
+			script, as_dict=1
 		)
 
 		attribute_value_map = {}
