@@ -1,4 +1,5 @@
-{% from "webshop/templates/includes/macros.html" import field_filter_section, attribute_filter_section, discount_range_filters %}
+{% from "webshop/templates/includes/macros.html" import field_filter_section, attribute_filter_section,
+discount_range_filters %}
 {% extends "templates/web.html" %}
 
 {% block header %}
@@ -16,17 +17,16 @@
 {% endblock %}
 
 {% block page_content %}
-<div class="item-group-content" itemscope itemtype="http://schema.org/Product"
-	data-item-group="{{ name }}">
-	<div class="item-group-slideshow">
+<div class="item-group-content" itemscope itemtype="http://schema.org/Product" data-item-group="{{ name }}">
+	<div class="item-group-slideshow mb-5">
 		{% if slideshow %} <!-- slideshow -->
-			{{ web_block(
-				"Hero Slider",
-				values=slideshow,
-				add_container=0,
-				add_top_padding=0,
-				add_bottom_padding=0,
-			) }}
+		{{ web_block(
+		"Hero Slider",
+		values=slideshow,
+		add_container=0,
+		add_top_padding=0,
+		add_bottom_padding=0,
+		) }}
 		{% endif %}
 
 		{% if description %} <!-- description -->
@@ -41,7 +41,7 @@
 		<div class="col-12 order-1 col-md-3 order-md-1">
 			<div class="collapse d-md-block mr-4 filters-section" id="product-filters">
 				<div class="d-flex justify-content-between align-items-center mb-5 title-section">
-					<div class="mb-4 filters-title" > {{ _('Filters') }} </div>
+					<div class="mb-4 filters-title"> {{ _('Filters') }} </div>
 					<a class="mb-4 clear-filters" href="/{{ doc.route }}">{{ _('Clear All') }}</a>
 				</div>
 				<!-- field filters -->

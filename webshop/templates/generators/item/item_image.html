@@ -1,38 +1,59 @@
 {% set column_size = 5 if slides else 4 %}
 <div class="col-md-{{ column_size }} h-100 d-flex mb-4">
 	{% if slides %}
-		<div class="item-slideshow d-flex flex-column mr-3">
-			{% for item in slides %}
-			<img class="item-slideshow-image mb-2 {% if loop.first %}active{% endif %}"
-					src="{{ item.image }}" alt="{{ item.heading }}">
-			{% endfor %}
-		</div>
-		{{ product_image(slides[0].image, 'product-image') }}
-		<!-- Simple image slideshow -->
-		<script>
-			frappe.ready(() => {
-				$('.page_content').on('click', '.item-slideshow-image', (e) => {
-					const $img = $(e.currentTarget);
-					const link = $img.prop('src');
-					const $product_image = $('.product-image');
-					$product_image.find('a').prop('href', link);
-					$product_image.find('img').prop('src', link);
+	<div class="item-slideshow d-flex flex-column mr-3" style="width: inherit; max-width: 6rem;">
+		{% for item in slides %}
+		{% if item.image.endswith('.mp4') or item.image.endswith('.MP4') or item.image.endswith('.webm') %}
+		<video class="item-slideshow-image mb-2 {% if loop.first %}active{% endif %}" src="{{ item.image }}" autoplay loop
+			muted></video>
+		{% else %}
+		<img class="item-slideshow-image mb-2 {% if loop.first %}active{% endif %}" src="{{ item.image }}"
+			alt="{{ item.heading }}">
+		{% endif %}
+		{% endfor %}
+	</div>
+	{{ product_image(slides[0].image, 'product-image') }}
+	<!-- Simple image slideshow -->
+	<script>
+		frappe.ready(() => {
+			const active = $('.item-slideshow-image.active').prop('src');
+			if (active.endsWith('.mp4') || active.endsWith('.MP4') || active.endsWith('.webm')) {
+				$('.product-image').find('img').css('display', 'none');
+				$('.product-image').find('video').css('display', 'inline-block');
+			}
+			else {
+				$('.product-image').find('video').css('display', 'none');
+				$('.product-image').find('img').css('display', 'inline-block');
+			}
 
-					$('.item-slideshow-image').removeClass('active');
-					$img.addClass('active');
-				});
-			})
-		</script>
+			$('.page_content').on('click', '.item-slideshow-image', (e) => {
+				const $img = $(e.currentTarget);
+				const link = $img.prop('src');
+				const $product_image = $('.product-image');
+				$product_image.find('a').prop('href', link);
+				$product_image.find('.website-image').prop('src', link);
+				if (link.endsWith('.mp4') || link.endsWith('.MP4') || link.endsWith('.webm')) {
+					$product_image.find('img').css('display', 'none');
+					$product_image.find('video').css('display', 'inline-block');
+				} else {
+					$product_image.find('video').css('display', 'none');
+					$product_image.find('img').css('display', 'inline-block');
+				}
+				$('.item-slideshow-image').removeClass('active');
+				$img.addClass('active');
+			});
+		})
+	</script>
 	{% else %}
-		{{ product_image(doc.website_image, alt=doc.website_image_alt or doc.item_name) }}
+	{{ product_image(doc.website_image, alt=doc.website_image_alt or doc.item_name) }}
 	{% endif %}
 
 	<!-- Simple image preview -->
 
 	<div class="image-zoom-view" style="display: none;">
 		<button type="button" class="close" aria-label="Close">
-			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-			stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+				stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
 				<line x1="18" y1="6" x2="6" y2="18"></line>
 				<line x1="6" y1="6" x2="18" y2="18"></line>
 			</svg>
@@ -76,6 +97,9 @@
 </style>
 <script>
 	frappe.ready(() => {
+		if ($('.item-slideshow').length === 0)
+			$('.product-image').find('video').css('display', 'none');
+
 		const $zoom_wrapper = $('.image-zoom-view');
 
 		$('.website-image').on('click', (e) => {
@@ -96,12 +120,17 @@
 
 		function show_preview(src) {
 			$zoom_wrapper.show();
-			const $img = $(`<img src="${src}">`)
+			let $img = $(`<img src="${src}">`)
+
+			if (src.includes('mp4') || src.includes('MP4') || src.includes('webm'))
+				$img = $(`<video src="${src}" autoplay loop controls style="max-width: 90vw; max-height: 90vh"></video>`)
+
 			$zoom_wrapper.append($img);
 		}
 
 		function hide_preview() {
 			$zoom_wrapper.find('img').remove();
+			$zoom_wrapper.find('video').remove();
 			$zoom_wrapper.hide();
 		}
 	})
